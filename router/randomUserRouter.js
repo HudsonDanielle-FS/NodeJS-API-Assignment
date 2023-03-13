@@ -1,10 +1,10 @@
 const express = require("express");
-const { jokeService, jokeServiceById } = require("../services/jokeService");
-const jokeRouter = express.Router();
+const { randomUserService, randomUserById } = require("../services/randomUserService");
+const randomUserRouter = express.Router();
 
 //localhost:3000/jokes/ten
-jokeRouter.get("/", (req, res, next) => {
-  jokeService()
+randomUserRouter.get("/", (req, res, next) => {
+  randomUserService()
     .then((result) => {
       res.status(200).json(result.data);
     })
@@ -18,8 +18,8 @@ jokeRouter.get("/", (req, res, next) => {
 });
 
 //localhost:3000/jokes/23
-jokeRouter.get("/:id", (req, res, next) => {
-  jokeServiceById(req.params.id)
+randomUserRouter.get("/:id", (req, res, next) => {
+  randomUserServiceById(req.params.id)
     .then((result) => {
       res.status(200).json(result.data);
     })
@@ -32,4 +32,4 @@ jokeRouter.get("/:id", (req, res, next) => {
     });
 });
 
-module.exports = jokeRouter;
+module.exports = randomUserRouter;

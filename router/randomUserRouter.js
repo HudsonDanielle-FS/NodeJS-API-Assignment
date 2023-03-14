@@ -1,7 +1,7 @@
 const express = require("express");
 const {
   randomUserService,
-  randomUserById,
+  randomUserServiceById,
 } = require("../services/randomUserService");
 const randomUserRouter = express.Router();
 
@@ -20,8 +20,8 @@ randomUserRouter.get("/", (req, res, next) => {
     });
 });
 
-//localhost:3000/randomUser/?gender-female
-randomUserRouter.get("/?gender=female", (req, res, next) => {
+//localhost:3000/randomUser/?gender=male
+randomUserRouter.get("/?gender=male", (req, res, next) => {
   randomUserServiceById(req.params.id)
     .then((result) => {
       res.status(200).json(result.data);

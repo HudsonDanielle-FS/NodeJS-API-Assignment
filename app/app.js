@@ -1,18 +1,17 @@
 const express = require("express");
 const morgan = require("morgan");
 const mongoose = require("mongoose");
-const randomUserRouter = require("../router/randomUserRouter");
-const movieRoutes = require("../api/models/movie");
-const directorRoutes = require("../api/routes/directors")
-
+const directorRoutes = require("../api/routes/directors");
+const movieRoutes = require("../api/routes/movies");
 const app = express();
+
 // http://localhost:3000
 app.get("/", (req, res, next) => {
-  res.status(200).json({ message: "Service is up" });
+  res.status(200).json({
+    message: "Service is up",
+    method: req.method,
+  });
 });
-
-//router middleware
-app.use("/randomUser", randomUserRouter);
 
 // middleware for logging
 app.use(morgan("dev"));
@@ -30,23 +29,16 @@ app.use((req, res, next) => {
   res.header("Access-Control-Allow-Origin", "*");
   res.header(
     "Access-Control-Allow-Headers",
-    "Origin, X-Requested_With, Content-Type, Accept, Authorization"
+    "Origin, X-Requested-With, Content-Type, Accept, Authorization"
   );
 
   if (req.method === "OPTIONS") {
     res.header(
       "Access-Control-Allow-Methods",
-      "POST, PUT,GET,PATH,PATCH,DELETE"
+      "POST, PUT, GET, PATH, PATCH, DELETE"
     );
   }
   next();
-});
-
-app.get("/", (req, res, next) => {
-  res.status(201).json({
-    message: "Service is up",
-    method: req.method,
-  });
 });
 
 app.use("/directors", directorRoutes);
@@ -69,7 +61,7 @@ app.use((error, req, res, next) => {
   });
 });
 
-// connect to mongoose
+// connect to mongodb
 mongoose.connect(process.env.mongoDBURL, (err) => {
   if (err) {
     console.error("Error:", err.message);
@@ -77,4 +69,5 @@ mongoose.connect(process.env.mongoDBURL, (err) => {
     console.log("MongoDB connection successful");
   }
 });
+
 module.exports = app;

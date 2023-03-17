@@ -54,10 +54,39 @@ router.get("/:movieId", (req, res, next) => {
 
 router.patch("/:movieId", (req, res, next) => {
   const movieId = req.params.movieId;
-  res.json({
-    message: "Movies - PATCH",
-    id: movieId,
-  });
+
+  const updatedMovie = {
+    title: req.body.title,
+    director: req.body.director,
+  };
+
+  Movie.updateOne(
+    { _id: movieId },
+    {
+      $set: updatedMovie,
+    }
+  )
+    .then((result) => {
+      res.status(200).json({
+        message: "Updated Movie",
+        movie: {
+          title: result.title,
+          director: result.director,
+          id: result._id,
+        },
+        metadata: {
+          host: req.hostname,
+          method: req.method,
+        },
+      });
+    })
+    .catch((err) => {
+      res.status(500).json({
+        error: {
+          message: err.message,
+        },
+      });
+    });
 });
 
 router.delete("/:movieId", (req, res, next) => {

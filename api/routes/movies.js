@@ -91,9 +91,27 @@ router.patch("/:movieId", (req, res, next) => {
 
 router.delete("/:movieId", (req, res, next) => {
   const movieId = req.params.movieId;
-  res.json({
-    message: "Movies - DELETE",
-    id: movieId,
+  Movie.deleteOne({_id: movieId})
+  .then((result) => {
+    res.status(200).json({
+      message: "Deleted Movie",
+      movie: {
+        title: result.title,
+        director: result.director,
+        id: result._id,
+      },
+      metadata: {
+        host: req.hostname,
+        method: req.method,
+      },
+    });
+  })
+  .catch((err) => {
+    res.status(500).json({
+      error: {
+        message: err.message,
+      },
+    });
   });
 });
 

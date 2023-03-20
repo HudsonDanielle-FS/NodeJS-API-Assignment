@@ -65,7 +65,12 @@ router.get("/:movieId", (req, res, next) => {
   .select("title _Id")
   .exec()
   .then(movie => {
-    console.log(movie);
+    if(!movie){
+      console.log(movie)
+      return res.status(404).json({
+        message: "movie not found"
+      })
+    }
     res.status(201).json({
       movie: movie
     })
@@ -118,18 +123,16 @@ router.patch("/:movieId", (req, res, next) => {
 
 router.delete("/:movieId", (req, res, next) => {
   const movieId = req.params.movieId;
-  Movie.deleteOne({ _id: movieId })
+  Movie.deleteOne({
+    _id: movieId,
+  })
+    .exec()
     .then((result) => {
       res.status(200).json({
-        message: "Deleted Movie",
-        movie: {
-          title: result.title,
-          director: result.director,
-          id: result._id,
-        },
-        metadata: {
-          host: req.hostname,
-          method: req.method,
+        message: "Movie Deleted",
+        request: {
+          method: "GET",
+          url: "http://localhost:3000/directors/" + movieId,
         },
       });
     })

@@ -5,9 +5,22 @@ const router = express.Router();
 const Movie = require("../models/movie");
 
 router.get("/", (req, res, next) => {
-  res.json({
-    message: "Movies - GET",
-  });
+  Movie.find({})
+  .exec()
+  .then(result => {
+    console.log(result)
+    res.status(200).json({
+      message: "All movies returned"
+    })
+  })
+  .catch(err => {
+    console.error(error)
+    res.status(500).json({
+      error: {
+        message: err.message
+      }
+    })
+  })
 });
 
 router.post("/", (req, res, next) => {

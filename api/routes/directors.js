@@ -3,9 +3,22 @@ const router = express.Router();
 const mongoose = require("mongoose");
 
 router.get("/", (req, res, next) => {
-  res.json({
-    message: "Directors - GET",
-  });
+  Director.find({})
+  .exec()
+  .then(result => {
+    console.log(result)
+    res.status(200).json({
+      message: "All directors returned"
+    })
+  })
+  .catch(err => {
+    console.error(error)
+    res.status(500).json({
+      error: {
+        message: err.message
+      }
+    })
+  })
 });
 
 router.post("/", (req, res, next) => {

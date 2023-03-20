@@ -10,70 +10,73 @@ router.get("/", (req, res, next) => {
   });
 });
 
-router
-  .post("/", (req, res, next) => {
-    Movie.find({
-      title: req.body.title,
-      director: req.body.director,
-    })
-      .exec()
-      .then((result) => {
-        console.log(result);
-        if (result.length > 0) {
-          return res.status(406).json({
-            message: "Movie is already cataloged",
-          });
-        }
-
-        const newMovie = new Movie({
-          _id: mongoose.Types.ObjectId(),
-          title: req.body.title,
-          director: req.body.director,
-        });
-
-        //write to the bd
-        newMovie
-          .save()
-          .then((result) => {
-            console.log(result);
-            res.status(200).json({
-              message: "Movie Saved",
-              book: {
-                title: result.title,
-                director: result.director,
-                id: result._id,
-                metadata: {
-                  method: req.method,
-                  host: req.hostname,
-                },
-              },
-            });
-          })
-          .catch((err) => {
-            console.error(err.message);
-            res.status(500).json({
-              error: {
-                message: err.message,
-              },
-            });
-          });
-      });
+router.post("/", (req, res, next) => {
+  Movie.find({
+    title: req.body.title,
+    director: req.body.director,
   })
-  .catch(err => {
-      console.error(error);
-      res.status(500).json({
-          error:{
-              message: "Unable to save movie with title:" + req.body.title
-          }
-      })
-  });
+    .exec()
+    .then((result) => {
+      console.log(result);
+      if (result.length > 0) {
+        return res.status(406).json({
+          message: "Movie is already cataloged",
+        });
+      }
+
+      const newMovie = new Movie({
+        _id: mongoose.Types.ObjectId(),
+        title: req.body.title,
+        director: req.body.director,
+      });
+
+      //write to the bd
+      newMovie
+        .save()
+        .then((result) => {
+          console.log(result);
+          res.status(200).json({
+            message: "Movie Saved",
+            book: {
+              title: result.title,
+              director: result.director,
+              id: result._id,
+              metadata: {
+                method: req.method,
+                host: req.hostname,
+              },
+            },
+          });
+        })
+        .catch((err) => {
+          console.error(error);
+          res.status(500).json({
+            error: {
+              message: "Unable to save movie with title:" + req.body.title,
+            },
+          });
+        });
+    });
+});
 
 router.get("/:movieId", (req, res, next) => {
   const movieId = req.params.movieId;
-  res.json({
-    message: "Movies - GET",
-    id: movieId,
-  });
+  Movie.findById(movieId)
+  .select("title _Id")
+  .exec()
+  .then(movie => {
+    console.log(movie);
+    res.status(201).json({
+      movie: movie
+    })
+  })
+  .catch(err => {
+    res.status(500).json({
+      error: {
+        message: err.message
+      }
+    })
+  })
 });
 
 router.patch("/:movieId", (req, res, next) => {

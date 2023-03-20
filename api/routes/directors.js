@@ -16,10 +16,22 @@ router.post("/", (req, res, next) => {
 
 router.get("/:directorId", (req, res, next) => {
   const directorId = req.params.directorId;
-  res.json({
-    message: "Directors - GET",
-    id: directorId,
-  });
+  Author.findById(directorId)
+  .select("name _Id")
+  .exec()
+  .then(director => {
+    console.log(director);
+    res.status(201).json({
+      director: director
+    })
+  })
+  .catch(err => {
+    res.status(500).json({
+      error: {
+        message: err.message
+      }
+    })
+  })
 });
 
 router.patch("/:directorId", (req, res, next) => {

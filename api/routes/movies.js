@@ -5,7 +5,7 @@ const router = express.Router();
 const Movie = require("../models/movie");
 
 router.get("/", (req, res, next) => {
-  Movie.find({})
+  Movie.find()
   .exec()
   .then(result => {
     console.log(result)
@@ -24,18 +24,18 @@ router.get("/", (req, res, next) => {
 });
 
 router.post("/", (req, res, next) => {
-  Movie.find({
-    title: req.body.title,
-    director: req.body.director,
-  })
-    .exec()
-    .then((result) => {
-      console.log(result);
-      if (result.length > 0) {
-        return res.status(406).json({
-          message: "Movie is already cataloged",
-        });
-      }
+  // Movie.find({
+  //   title: req.body.title,
+  //   director: req.body.director,
+  // })
+  //   .exec()
+  //   .then((result) => {
+  //     console.log(result);
+  //     if (result.length > 0) {
+  //       return res.status(406).json({
+  //         message: "Movie is already cataloged",
+  //       });
+  //     }
 
       const newMovie = new Movie({
         _id: mongoose.Types.ObjectId(),
@@ -44,13 +44,12 @@ router.post("/", (req, res, next) => {
       });
 
       //write to the bd
-      newMovie
-        .save()
-        .then((result) => {
+      newMovie.save()
+        .then(result => {
           console.log(result);
           res.status(200).json({
             message: "Movie Saved",
-            book: {
+            movie: {
               title: result.title,
               director: result.director,
               id: result._id,
@@ -61,8 +60,8 @@ router.post("/", (req, res, next) => {
             },
           });
         })
-        .catch((err) => {
-          console.error(error);
+        .catch(err => {
+          console.error(err.message);
           res.status(500).json({
             error: {
               message: "Unable to save movie with title:" + req.body.title,
@@ -70,7 +69,7 @@ router.post("/", (req, res, next) => {
           });
         });
     });
-});
+//});
 
 router.get("/:movieId", (req, res, next) => {
   const movieId = req.params.movieId;

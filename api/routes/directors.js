@@ -31,6 +31,7 @@ router.get("/:directorId", (req, res, next) => {
   const directorId = req.params.directorId;
   Author.findById(directorId)
     .select("name _Id")
+    .populate("movie", "title director")
     .exec()
     .then((director) => {
       if(!director){
